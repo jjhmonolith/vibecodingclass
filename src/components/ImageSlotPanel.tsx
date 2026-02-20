@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { ImageSlot } from "@/lib/types";
 import { fileToBase64 } from "@/lib/image-utils";
+import PexelsSearchModal from "./PexelsSearchModal";
 
 interface ImageSlotPanelProps {
   slots: ImageSlot[];
@@ -14,6 +15,7 @@ export default function ImageSlotPanel({
   onReplace,
 }: ImageSlotPanelProps) {
   const [isOpen, setIsOpen] = useState(true);
+  const [searchSlot, setSearchSlot] = useState<string | null>(null);
 
   if (slots.length === 0) return null;
 
@@ -30,9 +32,22 @@ export default function ImageSlotPanel({
       {isOpen && (
         <div className="px-4 pb-3 flex flex-wrap gap-3">
           {slots.map((slot) => (
-            <SlotItem key={slot.name} slot={slot} onReplace={onReplace} />
+            <SlotItem
+              key={slot.name}
+              slot={slot}
+              onReplace={onReplace}
+              onSearch={() => setSearchSlot(slot.name)}
+            />
           ))}
         </div>
+      )}
+
+      {searchSlot && (
+        <PexelsSearchModal
+          slotName={searchSlot}
+          onSelect={(slotName, imageUrl) => onReplace(slotName, imageUrl)}
+          onClose={() => setSearchSlot(null)}
+        />
       )}
     </div>
   );
@@ -41,9 +56,11 @@ export default function ImageSlotPanel({
 function SlotItem({
   slot,
   onReplace,
+  onSearch,
 }: {
   slot: ImageSlot;
   onReplace: (slotName: string, base64: string) => void;
+  onSearch: () => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +94,12 @@ function SlotItem({
         className="ml-1 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         {slot.isPlaceholder ? "업로드" : "변경"}
+      </button>
+      <button
+        onClick={onSearch}
+        className="px-2 py-1 text-xs bg-purple-500 text-white rounded hover:bg-purple-600"
+      >
+        검색
       </button>
       <input
         ref={fileInputRef}

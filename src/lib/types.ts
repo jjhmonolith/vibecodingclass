@@ -29,3 +29,15 @@ export interface ImageSlot {
   currentSrc: string;
   isPlaceholder: boolean;
 }
+
+export interface PexelsPhoto {
+  id: number;
+  src: { small: string; medium: string };
+  photographer: string;
+  alt: string;
+}
+
+export interface PexelsSearchResponse {
+  photos: PexelsPhoto[];
+  total_results: number;
+}
