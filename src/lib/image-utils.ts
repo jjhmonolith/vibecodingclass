@@ -23,11 +23,13 @@ export function replaceSlotImage(
   slotName: string,
   newSrc: string
 ): string {
-  const regex = new RegExp(
-    `(<img\\s[^>]*data-slot="${escapeRegex(slotName)}"[^>]*?)src="[^"]*"`,
+  const tagRegex = new RegExp(
+    `<img\\s[^>]*data-slot="${escapeRegex(slotName)}"[^>]*>`,
     "gi"
   );
-  return html.replace(regex, `$1src="${newSrc}"`);
+  return html.replace(tagRegex, (tag) =>
+    tag.replace(/src="[^"]*"/, `src="${newSrc}"`)
+  );
 }
 
 export function fileToBase64(file: File): Promise<string> {
