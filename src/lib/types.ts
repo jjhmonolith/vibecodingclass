@@ -23,3 +23,9 @@ export interface ChatResponse {
   html: string | null;
   phase: Phase;
 }
+
+export interface ImageSlot {
+  name: string;
+  currentSrc: string;
+  isPlaceholder: boolean;
+}

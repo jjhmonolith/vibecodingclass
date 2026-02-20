@@ -1,10 +1,19 @@
 "use client";
 
+import { ImageSlot } from "@/lib/types";
+import ImageSlotPanel from "./ImageSlotPanel";
+
 interface PreviewPanelProps {
   html: string | null;
+  slots: ImageSlot[];
+  onReplaceImage: (slotName: string, base64: string) => void;
 }
 
-export default function PreviewPanel({ html }: PreviewPanelProps) {
+export default function PreviewPanel({
+  html,
+  slots,
+  onReplaceImage,
+}: PreviewPanelProps) {
   if (!html) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50 text-gray-400">
@@ -18,11 +27,16 @@ export default function PreviewPanel({ html }: PreviewPanelProps) {
   }
 
   return (
-    <iframe
-      srcDoc={html}
-      sandbox="allow-scripts"
-      className="w-full h-full border-0 bg-white"
-      title="미리보기"
-    />
+    <div className="flex flex-col h-full">
+      <ImageSlotPanel slots={slots} onReplace={onReplaceImage} />
+      <div className="flex-1">
+        <iframe
+          srcDoc={html}
+          sandbox="allow-scripts"
+          className="w-full h-full border-0 bg-white"
+          title="미리보기"
+        />
+      </div>
+    </div>
   );
 }

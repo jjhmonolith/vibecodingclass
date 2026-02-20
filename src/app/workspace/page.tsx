@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Message, Phase, ChatResponse } from "@/lib/types";
+import { extractSlots, replaceSlotImage } from "@/lib/image-utils";
 import ChatPanel from "@/components/ChatPanel";
 import PreviewPanel from "@/components/PreviewPanel";
 import TopBar from "@/components/TopBar";
@@ -16,6 +17,20 @@ function WorkspaceContent() {
   const [currentHtml, setCurrentHtml] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const [isLoading, setIsLoading] = useState(false);
+
+  const slots = useMemo(
+    () => (currentHtml ? extractSlots(currentHtml) : []),
+    [currentHtml]
+  );
+
+  const handleReplaceImage = useCallback(
+    (slotName: string, base64: string) => {
+      if (!currentHtml) return;
+      const updatedHtml = replaceSlotImage(currentHtml, slotName, base64);
+      setCurrentHtml(updatedHtml);
+    },
+    [currentHtml]
+  );
 
   useEffect(() => {
     if (!topic) {
@@ -125,7 +140,11 @@ function WorkspaceContent() {
           />
         </div>
         <div className="flex-1">
-          <PreviewPanel html={currentHtml} />
+          <PreviewPanel
+            html={currentHtml}
+            slots={slots}
+            onReplaceImage={handleReplaceImage}
+          />
         </div>
       </div>
     </div>
