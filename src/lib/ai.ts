@@ -2,9 +2,11 @@ import OpenAI from "openai";
 import { Phase, Message, ChatResponse } from "./types";
 import { buildSystemPrompt } from "./prompts";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getClient() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 export async function chat(
   topic: string,
@@ -40,6 +42,7 @@ export async function chat(
     });
   }
 
+  const client = getClient();
   const response = await client.responses.create({
     model: "gpt-5.2",
     instructions: systemPrompt,

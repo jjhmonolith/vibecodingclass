@@ -121,6 +121,7 @@ function WorkspaceContent() {
             messages={messages}
             onSend={handleSend}
             isLoading={isLoading}
+            phase={phase}
           />
         </div>
         <div className="flex-1">

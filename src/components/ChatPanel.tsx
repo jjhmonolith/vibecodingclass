@@ -1,20 +1,25 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Message } from "@/lib/types";
+import { Message, Phase } from "@/lib/types";
 import ChatMessage from "./ChatMessage";
+
+const CODING_PHASES: Phase[] = ["confirm_spec", "generate", "confirm_modify"];
 
 interface ChatPanelProps {
   messages: Message[];
   onSend: (text: string) => void;
   isLoading: boolean;
+  phase: Phase;
 }
 
 export default function ChatPanel({
   messages,
   onSend,
   isLoading,
+  phase,
 }: ChatPanelProps) {
+  const isCoding = isLoading && CODING_PHASES.includes(phase);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -46,7 +51,7 @@ export default function ChatPanel({
         {messages.map((msg, i) => (
           <ChatMessage key={i} message={msg} />
         ))}
-        {isLoading && (
+        {isLoading && !isCoding && (
           <div className="flex justify-start mb-3">
             <div className="bg-gray-100 rounded-2xl rounded-bl-md px-4 py-3 text-sm text-gray-500">
               <div className="text-xs font-semibold text-blue-600 mb-1">
@@ -56,6 +61,24 @@ export default function ChatPanel({
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
+              </div>
+            </div>
+          </div>
+        )}
+        {isCoding && (
+          <div className="flex justify-start mb-3">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl rounded-bl-md px-4 py-3 text-sm">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                <span className="text-xs font-semibold text-blue-700">
+                  코딩 중...
+                </span>
+              </div>
+              <div className="text-xs text-gray-500 font-mono">
+                <span className="inline-block animate-pulse">
+                  페이지를 만들고 있어요
+                </span>
+                <span className="inline-block ml-0.5 animate-[blink_1s_steps(2)_infinite]">|</span>
               </div>
             </div>
           </div>
